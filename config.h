@@ -1,7 +1,7 @@
 #pragma once
 
 #define USE_I2C
-//#define MASTER_RIGHT
+#define MASTER_LEFT
 #define SPLIT_USB_DETECT
 #define EE_HANDS
 #define RGBLIGHT_LAYERS
