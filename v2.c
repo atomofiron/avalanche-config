@@ -36,7 +36,7 @@ oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
 
 void oled_render_boot(bool bootloader) {
     oled_clear();
-    oled_set_cursor(0, 2);
+    oled_set_cursor(0, 1);
     if (bootloader) {
         oled_write_P(PSTR("Awaiting new firmware..."), false);
     } else {
