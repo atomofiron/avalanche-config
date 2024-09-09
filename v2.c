@@ -27,7 +27,23 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    return OLED_ROTATION_180;
+    if (is_keyboard_master()) {
+        return OLED_ROTATION_180;
+    }
+
+    return rotation;
+}
+
+void oled_render_boot(bool bootloader) {
+    oled_clear();
+    oled_set_cursor(0, 2);
+    if (bootloader) {
+        oled_write_P(PSTR("Awaiting new firmware..."), false);
+    } else {
+        oled_write_P(PSTR("Rebooting..."), false);
+    }
+
+    oled_render_dirty(true);
 }
 
 static const char PROGMEM uwu[] = {
@@ -50,9 +66,10 @@ int frame_counter = 0;
 long int counter = 0;
 
 bool oled_task_kb(void) {
-    // if (!oled_task_user()) {
-    //     return false;
-    // }
+    if (!oled_task_user()) {
+        return false;
+    }
+
     int offset = -4;
     long int tmp = counter;
     while (tmp >= 10) {
@@ -79,7 +96,24 @@ bool oled_task_kb(void) {
         if (counter != config.counter) {
             config.counter = counter;
             eeconfig_update_user(config.raw);
+            oled_set_cursor(0, 3);
+            oled_write_P(PSTR("svd"), false);
         }
+    }
+    if (is_keyboard_left()) {
+        if (offset == 0) {
+            oled_set_cursor(17, 0);
+        } else {
+            oled_set_cursor(0, 1);
+        }
+        oled_write_P(PSTR("left"), false);
+    } else {
+        if (offset == 0) {
+            oled_set_cursor(16, 0);
+        } else {
+            oled_set_cursor(0, 1);
+        }
+        oled_write_P(PSTR("right"), false);
     }
 
     return true;
