@@ -8,17 +8,10 @@
 bool encoder_update_kb(uint8_t index, bool clockwise) {
     if (!encoder_update_user(index, clockwise)) { return false; }
     if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
-        }
+        for (int i = 0; i < 2; i++)
+            clockwise ? tap_code(MS_WHLU) : tap_code(MS_WHLD);
     } else if (index == 1) {
-        if (clockwise) {
-            tap_code_delay(KC_VOLD, 10);
-        } else {
-            tap_code_delay(KC_VOLU, 10);
-        }
+        clockwise ? tap_code_delay(KC_VOLD, 10) : tap_code_delay(KC_VOLU, 10);
     }
     return true;
 }
