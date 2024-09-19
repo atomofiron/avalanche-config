@@ -85,7 +85,7 @@ bool oled_task_kb(void) {
 
     bool invert = false;
     frame_counter++;
-    if (frame_counter == 20) { // 20 fps
+    if (frame_counter == 60) { // 20 fps
         frame_counter = 0;
         if (counter != config.counter) {
             config.counter = counter;
@@ -112,6 +112,7 @@ bool oled_task_kb(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         counter++;
+        frame_counter = 0;
     }
     return true;
 }
