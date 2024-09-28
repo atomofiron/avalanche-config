@@ -17,6 +17,7 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
 }
 #endif
 
+#define FPS 20
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
@@ -73,9 +74,15 @@ config_t config;
 bool debug = false;
 int frame_counter = 0;
 long int counter = 0;
+int idle_counter = 0;
 
 bool oled_task_kb(void) {
     if (!oled_task_user()) {
+        return false;
+    }
+    if (idle_counter < FPS * 3) {
+        idle_counter++;
+    } else {
         return false;
     }
 
@@ -85,7 +92,7 @@ bool oled_task_kb(void) {
 
     bool invert = false;
     frame_counter++;
-    if (frame_counter == 60) { // 20 fps
+    if (frame_counter == FPS * 3) {
         frame_counter = 0;
         if (counter != config.counter) {
             config.counter = counter;
@@ -110,6 +117,7 @@ bool oled_task_kb(void) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    idle_counter = 0;
     if (record->event.pressed) {
         counter++;
         frame_counter = 0;
